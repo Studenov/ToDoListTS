@@ -75,6 +75,7 @@ typings/
 
 # Dependencies
 /node_modules
+/db
 
 # Testing
 /coverage
