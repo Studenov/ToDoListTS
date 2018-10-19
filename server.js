@@ -47,7 +47,7 @@ const createApp = () => {
     next();
   });
 
-  app.post('/singup', (req, res) => {
+  app.post('/signup', (req, res) => {
     const user = new UserModel({
       email: req.body.email,
       password: req.body.password
@@ -60,13 +60,13 @@ const createApp = () => {
     return res.status(200).send({ token: token });
   });
 
-  app.post('/singin', (req, res) => {
+  app.post('/signin', (req, res) => {
     UserModel.findOne({ email: req.body.email }, function(error, user) {
       if (error) throw error;
       user.comparePassword(req.body.password, function(err, isMatch) {
         if (err) throw err;
         if (!isMatch) {
-          return res.status(400).send({
+          return res.status(401).send({
             body: {
               message: "Email or password is incorrect",
               statusCode: 1
@@ -82,7 +82,15 @@ const createApp = () => {
 
   app.get('/profile', (req, res) => {
     const token = req.headers.authorization.split(' ');
-    console.log(jwt.verify(token[1], jwtOptions.secretOrKey));
+    jwt.verify(token[1], jwtOptions.secretOrKey, function(error) {
+      if (error) return res.status(401).send({
+        body: {
+          error: "Token already expired",
+          statusCode: 2
+        }
+      });
+      return res.status(200).send({ token: token[1] });
+    });
   });
 
   app.use('*', (req, res) => {
