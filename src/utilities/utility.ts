@@ -1,5 +1,10 @@
-export function createReducer(initialState, handlers) {
-  return (state = initialState, action) => {
+type Actions = {
+  type: string,
+  payload: object
+}
+
+export function createReducer(initialState: object, handlers) {
+  return (state = initialState, action: Actions) => {
     const handler = handlers[action.type];
     if (!handler) {
       return state;

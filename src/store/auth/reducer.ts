@@ -2,33 +2,35 @@ import { createReducer } from '../../utilities/utility';
 import * as TYPES from './types';
 
 type State = {
-  name: string,
+  email: string,
   password: string,
   token: string,
   authSuccess: boolean
 }
-
 const initState: State = {
-  name: '',
+  email: '',
   password: '',
   token: '',
   authSuccess: false
 }
 
 type loginPayload = {
-  name: string,
+  email: string,
   password: string
 }
 type tokenPayload = {
   token: string
 }
+type ActionHandlerLoginUser<T> = (state: State, payload: T) => State;
+type ActionHandlerToken<T> = (state: State, payload: T) => State;
+type ActionHandler = (state: State) => State;
 
-const signUpUser = (state: Object, { name, password }: loginPayload) => ({ ...state, name, password });
-const signInUser = (state: Object, { name, password }: loginPayload) => ({ ...state, name, password });
-const successAuthorizationUser = (state: Object, { token }: tokenPayload) => ({ ...state, token, authSuccess: true });
-const sendTokenToRefresh = (state: Object) => ({ ...state });
-const successRefreshToken = (state: Object, { token }: tokenPayload) => ({ ...state, token });
-const logOutUser = (state: Object) => ({ ...state, name: '', password: '', token: '', authSuccess: false });
+const signUpUser: ActionHandlerLoginUser<loginPayload> = (state: State, { email, password }) => ({ ...state, email, password });
+const signInUser: ActionHandlerLoginUser<loginPayload> = (state: State, { email, password }) => ({ ...state, email, password });
+const successAuthorizationUser: ActionHandlerToken<tokenPayload> = (state: State, { token }) => ({ ...state, token, authSuccess: true });
+const sendTokenToRefresh: ActionHandler = (state: State) => ({ ...state });
+const successRefreshToken: ActionHandlerToken<tokenPayload> = (state: State, { token }) => ({ ...state, token });
+const logOutUser: ActionHandler = (state: State) => ({ ...state, email: '', password: '', token: '', authSuccess: false });
 
 const handlers = {
   [TYPES.SIGN_UP_USER]: signUpUser,
