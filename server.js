@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
+const cors = require('cors');
 
 const db = require('./db');
 const UserModel = require('./models/user');
@@ -29,6 +30,10 @@ const options = {
 
 const createApp = () => {
   app.use(morgan('dev'));
+  app.use(cors({
+    origin: 'http://localhost:4000',
+    optionsSuccessStatus: 200
+  }));
   app.use(passport.initialize());
   app.use(express.static(path.join(__dirname, 'dist')));
   app.use(bodyParser.json());
@@ -48,48 +53,63 @@ const createApp = () => {
   });
 
   app.post('/signup', (req, res) => {
-    const user = new UserModel({
-      email: req.body.email,
-      password: req.body.password
+    UserModel.findOne({ email: req.body.email }, function(error, user) {
+      if (error) throw error;
+      if (user) return res.status(401).send({
+        message: "This email is already in use",
+        statusCode: 0
+      });
+      else {
+        const user = new UserModel({
+          email: req.body.email,
+          password: req.body.password
+        });
+        user.save((err) => {
+          if (err) throw err;
+        });
+        const payload = { email: req.body.email };
+        const token = jwt.sign(payload, jwtOptions.secretOrKey, options);
+        return res.status(200).send({ token: token });
+      }
     });
-    user.save((err) => {
-      if (err) throw err;
-    });
-    const payload = { email: req.body.email };
-    const token = jwt.sign(payload, jwtOptions.secretOrKey, options);
-    return res.status(200).send({ token: token });
   });
 
   app.post('/signin', (req, res) => {
     UserModel.findOne({ email: req.body.email }, function(error, user) {
       if (error) throw error;
-      user.comparePassword(req.body.password, function(err, isMatch) {
-        if (err) throw err;
-        if (!isMatch) {
-          return res.status(401).send({
-            body: {
+      if (user === null) return res.status(401).send({
+        message: "Email or password is incorrect",
+        statusCode: 1
+      });
+      else {
+        user.comparePassword(req.body.password, function(err, isMatch) {
+          if (err) throw err;
+          if (!isMatch) {
+            return res.status(401).send({
               message: "Email or password is incorrect",
               statusCode: 1
-            }
-          });
-        }
-        const payload = { email: req.body.email };
-        const token = jwt.sign(payload, jwtOptions.secretOrKey, options);
-        return res.status(200).send({ token: token });
-      });
+            });
+          }
+          const payload = { email: req.body.email };
+          const token = jwt.sign(payload, jwtOptions.secretOrKey, options);
+          return res.status(200).send({ token: token });
+        });
+      }
     });
   });
 
-  app.get('/profile', (req, res) => {
-    const token = req.headers.authorization.split(' ');
-    jwt.verify(token[1], jwtOptions.secretOrKey, function(error) {
+  app.get('/verification', (req, res) => {
+    const token = req.body.token;
+    jwt.verify(token, jwtOptions.secretOrKey, function(error) {
       if (error) return res.status(401).send({
-        body: {
-          error: "Token already expired",
-          statusCode: 2
-        }
+        error: "Token already expired",
+        statusCode: 2,
+        token: token
       });
-      return res.status(200).send({ token: token[1] });
+      return res.status(200).send({
+        statusCode: 5,
+        token: token
+      });
     });
   });
 

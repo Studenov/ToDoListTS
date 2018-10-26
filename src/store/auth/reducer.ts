@@ -7,13 +7,6 @@ type State = {
   token: string,
   authSuccess: boolean
 }
-const initState: State = {
-  email: '',
-  password: '',
-  token: '',
-  authSuccess: false
-}
-
 type loginPayload = {
   email: string,
   password: string
@@ -24,6 +17,13 @@ type tokenPayload = {
 type ActionHandlerLoginUser<T> = (state: State, payload: T) => State;
 type ActionHandlerToken<T> = (state: State, payload: T) => State;
 type ActionHandler = (state: State) => State;
+
+const initState: State = {
+  email: '',
+  password: '',
+  token: '',
+  authSuccess: false
+}
 
 const signUpUser: ActionHandlerLoginUser<loginPayload> = (state: State, { email, password }) => ({ ...state, email, password });
 const signInUser: ActionHandlerLoginUser<loginPayload> = (state: State, { email, password }) => ({ ...state, email, password });

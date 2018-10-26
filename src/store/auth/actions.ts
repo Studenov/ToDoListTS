@@ -3,12 +3,12 @@ import {
   SEND_TOKEN_TO_REFRESH, SUCCESS_REFRESH_TOKEN, LOG_OUT_USER
 } from './types';
 
-type signUpUserAction = { type: typeof SIGN_UP_USER, payload: { email: string, password: string } };
-type signInUserAction = { type: typeof SIGN_IN_USER, payload: { email: string, password: string } };
-type successAuthorizationUserAction = { type: typeof SUCCESS_AUTHORIZATION_USER, payload: { token: string } };
-type sendTokenToRefreshAction = { type: typeof SEND_TOKEN_TO_REFRESH };
-type successRefreshTokenAction = { type: typeof SUCCESS_REFRESH_TOKEN, payload: { token: string } };
-type logOutUserAction = { type: typeof LOG_OUT_USER };
+export type signUpUserAction = { type: typeof SIGN_UP_USER, payload: { email: string, password: string } };
+export type signInUserAction = { type: typeof SIGN_IN_USER, payload: { email: string, password: string } };
+export type successAuthorizationUserAction = { type: typeof SUCCESS_AUTHORIZATION_USER, payload: { token: string } };
+export type sendTokenToRefreshAction = { type: typeof SEND_TOKEN_TO_REFRESH };
+export type successRefreshTokenAction = { type: typeof SUCCESS_REFRESH_TOKEN, payload: { token: string } };
+export type logOutUserAction = { type: typeof LOG_OUT_USER };
 
 
 

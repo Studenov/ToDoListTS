@@ -2,13 +2,13 @@
 
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const PostCSSFlexBugsFixes = require('postcss-flexbugs-fixes');
 
 const paths = require('./paths');
 
 const publicPath = '/';
 
 module.exports = (mode) => {
-
   return {
     mode: mode || 'none',
     devtool: mode === 'development' ? 'cheap-module-source-map' : false,
@@ -58,7 +58,7 @@ module.exports = (mode) => {
               options: {
                 ident: 'postcss',
                 plugins: () => [
-                  require('postcss-flexbugs-fixes'),
+                  PostCSSFlexBugsFixes,
                   autoprefixer({
                     browsers: [
                       '>1%',

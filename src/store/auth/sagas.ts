@@ -4,13 +4,12 @@ import {
 } from 'redux-saga/effects';
 
 import { SIGN_UP_USER, SIGN_IN_USER } from './types';
-import { messageError } from '../error/actions';
-import { successAuthorizationUser } from './actions';
+import { messageError, messageErrorAction } from '../error/actions';
+import { successAuthorizationUser, successAuthorizationUserAction } from './actions';
 import { setUserToken } from '../../utilities/APIConfig';
 import { authorizationUser } from './helpers/auth';
 
-
-type Effect = PutEffect<any> | CallEffect;
+type EffectAuth = PutEffect<successAuthorizationUserAction | messageErrorAction> | CallEffect;
 type AuthUser = {
   payload: {
     email: string,
@@ -19,7 +18,7 @@ type AuthUser = {
   type: string
 }
 
-function* loginUser({ payload, type }: AuthUser): IterableIterator<Effect> {
+function* loginUser({ payload, type }: AuthUser): IterableIterator<EffectAuth> {
   const { email, password } = payload;
   let newUser = false;
   if (type === 'SIGN_UP_USER') newUser = true;
@@ -28,10 +27,7 @@ function* loginUser({ payload, type }: AuthUser): IterableIterator<Effect> {
     setUserToken(token);
     yield put(successAuthorizationUser(token));
   } catch (e) {
-    console.log('<-- Start console dir -->');
-    console.dir(e);
-    console.log('<-- End console dir -->');
-    yield put(messageError(e));
+    yield put(messageError(e.message, e.statusCode));
   }
 }
 

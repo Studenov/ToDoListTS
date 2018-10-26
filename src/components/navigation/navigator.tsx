@@ -1,37 +1,48 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
-  Route, withRouter, Switch, Redirect,
-  RouteComponentProps, RouteProps
+  Route, Switch, Redirect,
+  withRouter
 } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { Home } from '../containers/home';
-import SingUp from '../auth/signup';
-import SingIn from '../auth/signin';
-import Main from '../containers/main';
+import { SignUpConnect } from '../auth/signup';
+import { SignInConnect } from '../auth/signin';
+import { DashBoard } from '../containers/dashboard';
 
-type RouteComponent = React.StatelessComponent<RouteComponentProps<{}>> | React.ComponentClass<any>
-
-
-
-
-const PrivateRoute: React.StatelessComponent<RouteProps> = ({ component, ...rest }) => {
-  const renderFn = (Component?: RouteComponent) => (props: RouteProps) => {
-    if (!Component) {
-      return null;
+const PrivateRoute = ({ component: Component, token, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) => {
+      if (token) {
+        return <Component {...props} />;
+      }
+      return <Redirect to={{ pathname: '/', state: { from: props.location } }} />;
     }
-    
-  }
-};
+      }
+  />
+);
 
-export class Navigator extends React.Component {
-  render() {
-    return (
-      <Switch>
-        <Route exact path='/' component={Home} />
-        <Route />
-        <Route />
-        <PrivateRoute />
-      </Switch>
-    );
-  }
-}
+const PublicRoute = ({ component: Component, token, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => (!token
+      ? <Component {...props} />
+      : <Redirect to="/" />)}
+  />
+);
+
+const Navigator = () => (
+  <Switch>
+    <PublicRoute exact path="/" component={Home} />
+    <PublicRoute exact path="/signup" component={SignUpConnect} />
+    <PublicRoute exact path="/signin" component={SignInConnect} />
+    <PrivateRoute exact path="/dashboard" component={DashBoard} />
+  </Switch>
+);
+
+const mapStateToProps = store => ({
+  token: store.dataAuth.token
+});
+
+export const NavigatorConnect = withRouter(connect(mapStateToProps, null)(Navigator));

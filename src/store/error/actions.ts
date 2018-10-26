@@ -1,8 +1,8 @@
 import { MESSAGE_ERROR } from './types';
 
-type messageErrorAction = { type: typeof MESSAGE_ERROR, payload: { message: string } };
+export type messageErrorAction = { type: typeof MESSAGE_ERROR, payload: { message: string, statusCode: number } };
 
-export const messageError = (message: string): messageErrorAction => ({
+export const messageError = (message: string, statusCode: number): messageErrorAction => ({
   type: MESSAGE_ERROR,
-  payload: { message }
+  payload: { message, statusCode }
 });

@@ -3,7 +3,11 @@ type Actions = {
   payload: object
 }
 
-export function createReducer(initialState: object, handlers) {
+type Handlers = {
+  [key: string]: Function
+}
+
+export function createReducer(initialState: object, handlers: Handlers) {
   return (state = initialState, action: Actions) => {
     const handler = handlers[action.type];
     if (!handler) {

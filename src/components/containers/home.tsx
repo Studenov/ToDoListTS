@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import HomePNG from '../../../assets/images/home.png';
 import TrelloHomeSVG from '../../../assets/images/trello.svg';
@@ -21,10 +22,10 @@ export class Home extends React.Component {
           </p>
           <div>
             <button>
-              Зарегистрироваться
+              <Link to='/signup'>Зарегистрироваться</Link>
             </button>
             <button>
-              Войти
+              <Link to='/signin'>Войти</Link>
             </button>
           </div>
         </div>

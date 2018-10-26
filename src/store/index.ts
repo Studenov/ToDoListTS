@@ -13,15 +13,17 @@ import { createWhitelistFilter } from 'redux-persist-transform-filter';
 
 import { rootSagas } from './sagas';
 import { authReduced } from './auth/reducer';
+import { errorReducer } from './error/reducer';
 
 export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware();
 const reducer = combineReducers({
-  dataAuth: authReduced
+  dataAuth: authReduced,
+  dataError: errorReducer
 });
 
 const userPersistConfig = {
-  key: 'root',
+  key: 'ToDoList',
   storage,
   whitelist: ['dataAuth'],
   transforms: [
