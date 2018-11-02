@@ -5,12 +5,25 @@ import {
 } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import { CombineReducers } from '../../store/index';
 import { Home } from '../containers/home';
 import { SignUpConnect } from '../auth/signup';
 import { SignInConnect } from '../auth/signin';
 import { DashBoard } from '../containers/dashboard';
 
-const PrivateRoute = ({ component: Component, token, ...rest }) => (
+
+type StateToProps = {
+  token: string
+}
+
+type UserRoute = {
+  component: any,
+  token: string,
+  exact: boolean,
+  path: string
+}
+
+const PrivateRoute = ({ component: Component, token, ...rest }: UserRoute) => (
   <Route
     {...rest}
     render={(props) => {
@@ -23,19 +36,16 @@ const PrivateRoute = ({ component: Component, token, ...rest }) => (
   />
 );
 
-const PublicRoute = ({ component: Component, token, ...rest }) => {
-  console.log(token);
-  return (
-    <Route
-      {...rest}
-      render={props => (token === ''
-        ? <Component {...props} />
-        : <Redirect to="/dashboard" />)}
-    />
-  );
-};
+const PublicRoute = ({ component: Component, token, ...rest }: UserRoute) => (
+  <Route
+    {...rest}
+    render={props => (token === ''
+      ? <Component {...props} />
+      : <Redirect to="/dashboard" />)}
+  />
+);
 
-const Navigator = ({ token }) => (
+const Navigator = ({ token }: StateToProps) => (
   <Switch>
     <PublicRoute exact path="/" component={Home} token={token} />
     <PublicRoute exact path="/signup" component={SignUpConnect} token={token} />
@@ -44,8 +54,8 @@ const Navigator = ({ token }) => (
   </Switch>
 );
 
-const mapStateToProps = store => ({
+const mapStateToProps = (store: CombineReducers) => ({
   token: store.dataAuth.token
 });
 
-export const NavigatorConnect = withRouter(connect(mapStateToProps, null)(Navigator));
+export const NavigatorConnect = withRouter(connect(mapStateToProps)(Navigator));

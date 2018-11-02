@@ -1,18 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
+import { CombineReducers } from '../../store/index';
 import { signInUser, signInUserAction } from '../../store/auth/actions';
+import * as StyledBlock from '../styled-components/blocks';
+import * as StyledForm from '../styled-components/auth';
 
-type State = {
-  email: string,
-  password: string
-}
-type Store = {
-  dataError: {
-    message: object
-  }
-}
 type DispatchActions = {
   type: signInUserAction 
 }
@@ -21,38 +15,47 @@ type EventTarget = {
     value: string
   } 
 }
-type Props = {
-  loginUser: (email: string, password: string) => void
+export type Props = {
+  loginUser: (email: string, password: string) => void,
+  error: string
 }
 
-class SignIn extends React.Component<Props, State> {
-  state = {
-    email: '',
-    password: ''
+const useFormInput = (initialValue: string) => {
+  const [value, setValue] = useState(initialValue);
+
+  function handleChangeValue({ target }: EventTarget) {
+    setValue(target.value);
   }
 
-  handleChangeEmail = ({ target }: EventTarget) => this.setState({ email: target.value });  
-
-  handleChangePassword = ({ target }: EventTarget) => this.setState({ password: target.value });
-
-  login = () => {
-    const { email, password } = this.state;
-    const { loginUser } = this.props;
-    loginUser(email, password);
-  }
-
-  render() {
-    return (
-      <div>
-        <input type="email" onChange={this.handleChangeEmail}/>
-        <input type="password" onChange={this.handleChangePassword}/>
-        <button onClick={this.login}>Sign In</button>
-      </div>
-    );
+  return {
+    value,
+    onChange: handleChangeValue
   }
 }
 
-const mapStateToProps = (store: Store) => ({
+const SignIn = ({ error, loginUser }: Props) => {
+  const email = useFormInput('');
+  const password = useFormInput('');
+  return (
+    <StyledBlock.Wrapper>
+      <StyledForm.Block>
+        <StyledForm.Form>
+          <StyledForm.InputBlock>
+            <StyledForm.Input type="email" id="email" placeholder="email@email.com" {...email} />
+            <StyledForm.Label htmlFor="email">Email</StyledForm.Label>
+          </StyledForm.InputBlock>
+          <StyledForm.InputBlock>
+            <StyledForm.Input type="password" id="password" placeholder="password" {...password}/>
+            <StyledForm.Label htmlFor="password">Password</StyledForm.Label>
+          </StyledForm.InputBlock>
+          <button onClick={() => loginUser(email.value, password.value)}>Sign In</button>
+        </StyledForm.Form>
+      </StyledForm.Block>
+    </StyledBlock.Wrapper>
+  )
+}
+
+const mapStateToProps = (store: CombineReducers) => ({
   error: store.dataError.message
 });
 
