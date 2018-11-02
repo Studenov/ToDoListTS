@@ -2,19 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import HomePNG from '../../../assets/images/home.png';
-import TrelloHomeSVG from '../../../assets/images/trello.svg';
+import TrelloLogo from '../../../assets/images/trello.png';
+import * as StyledHome from '../styled-components/home';
 
 export class Home extends React.Component {
   render() {
     return (
-      <div>
-        <div>
-          <svg>
-            <use xlinkHref={`${TrelloHomeSVG}#TrelloSVG`} />
-          </svg>
-          <p>
+      <StyledHome.Wrapper>
+        <StyledHome.Header>
+          <StyledHome.LogoTrello src={TrelloLogo} alt="Логотип Trello" title="Логотип Trello"/>
+          <h1>
             Trello - это бесплатный, гибкий и наглядный способ организовать что угодно с кем угодно.
-          </p>
+          </h1>
           <p>
             Выбросьте длинные цепочки электронных писем,
             устаревшие таблицы, не такие уж и клейкие стикеры и неуклюжие программы для управления проектами.
@@ -28,7 +27,7 @@ export class Home extends React.Component {
               <Link to='/signin'>Войти</Link>
             </button>
           </div>
-        </div>
+        </StyledHome.Header>
         <div>
           <p>
             Это доска Trello. Это перечень списков, заполненных карточками,
@@ -47,7 +46,7 @@ export class Home extends React.Component {
             Тут нечего настраивать и все происходит мгновенно.
           </p>
         </div>
-      </div>
+      </StyledHome.Wrapper>
     );
   }
 }

@@ -23,21 +23,24 @@ const PrivateRoute = ({ component: Component, token, ...rest }) => (
   />
 );
 
-const PublicRoute = ({ component: Component, token, ...rest }) => (
-  <Route
-    {...rest}
-    render={props => (!token
-      ? <Component {...props} />
-      : <Redirect to="/" />)}
-  />
-);
+const PublicRoute = ({ component: Component, token, ...rest }) => {
+  console.log(token);
+  return (
+    <Route
+      {...rest}
+      render={props => (token === ''
+        ? <Component {...props} />
+        : <Redirect to="/dashboard" />)}
+    />
+  );
+};
 
-const Navigator = () => (
+const Navigator = ({ token }) => (
   <Switch>
-    <PublicRoute exact path="/" component={Home} />
-    <PublicRoute exact path="/signup" component={SignUpConnect} />
-    <PublicRoute exact path="/signin" component={SignInConnect} />
-    <PrivateRoute exact path="/dashboard" component={DashBoard} />
+    <PublicRoute exact path="/" component={Home} token={token} />
+    <PublicRoute exact path="/signup" component={SignUpConnect} token={token} />
+    <PublicRoute exact path="/signin" component={SignInConnect} token={token} />
+    <PrivateRoute exact path="/dashboard" component={DashBoard} token={token} />
   </Switch>
 );
 

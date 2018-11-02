@@ -1,7 +1,7 @@
 import { createReducer } from '../../utilities/utility';
 import * as TYPES from './types';
 
-type State = {
+export type StateAuth = {
   email: string,
   password: string,
   token: string,
@@ -14,23 +14,23 @@ type loginPayload = {
 type tokenPayload = {
   token: string
 }
-type ActionHandlerLoginUser<T> = (state: State, payload: T) => State;
-type ActionHandlerToken<T> = (state: State, payload: T) => State;
-type ActionHandler = (state: State) => State;
+type ActionHandlerLoginUser<T> = (state: StateAuth, payload: T) => StateAuth;
+type ActionHandlerToken<T> = (state: StateAuth, payload: T) => StateAuth;
+type ActionHandler = (state: StateAuth) => StateAuth;
 
-const initState: State = {
+const initState: StateAuth = {
   email: '',
   password: '',
   token: '',
   authSuccess: false
 }
 
-const signUpUser: ActionHandlerLoginUser<loginPayload> = (state: State, { email, password }) => ({ ...state, email, password });
-const signInUser: ActionHandlerLoginUser<loginPayload> = (state: State, { email, password }) => ({ ...state, email, password });
-const successAuthorizationUser: ActionHandlerToken<tokenPayload> = (state: State, { token }) => ({ ...state, token, authSuccess: true });
-const sendTokenToRefresh: ActionHandler = (state: State) => ({ ...state });
-const successRefreshToken: ActionHandlerToken<tokenPayload> = (state: State, { token }) => ({ ...state, token });
-const logOutUser: ActionHandler = (state: State) => ({ ...state, email: '', password: '', token: '', authSuccess: false });
+const signUpUser: ActionHandlerLoginUser<loginPayload> = (state: StateAuth, { email, password }) => ({ ...state, email, password });
+const signInUser: ActionHandlerLoginUser<loginPayload> = (state: StateAuth, { email, password }) => ({ ...state, email, password });
+const successAuthorizationUser: ActionHandlerToken<tokenPayload> = (state: StateAuth, { token }) => ({ ...state, token, authSuccess: true });
+const sendTokenToRefresh: ActionHandler = (state: StateAuth) => ({ ...state });
+const successRefreshToken: ActionHandlerToken<tokenPayload> = (state: StateAuth, { token }) => ({ ...state, token });
+const logOutUser: ActionHandler = (state: StateAuth) => ({ ...state, email: '', password: '', token: '', authSuccess: false });
 
 const handlers = {
   [TYPES.SIGN_UP_USER]: signUpUser,

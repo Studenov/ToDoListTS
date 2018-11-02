@@ -1,6 +1,6 @@
 import {
   createStore, combineReducers, applyMiddleware,
-  compose
+  compose, Reducer
 } from 'redux';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
@@ -12,12 +12,19 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { createWhitelistFilter } from 'redux-persist-transform-filter';
 
 import { rootSagas } from './sagas';
-import { authReduced } from './auth/reducer';
-import { errorReducer } from './error/reducer';
+import { authReduced, StateAuth } from './auth/reducer';
+import { errorReducer, StateError } from './error/reducer';
 
 export const history = createBrowserHistory();
+
 const sagaMiddleware = createSagaMiddleware();
-const reducer = combineReducers({
+
+
+export type CombineReducers = {
+  dataAuth: StateAuth,
+  dataError: StateError
+}
+const reducer: Reducer<CombineReducers> = combineReducers({
   dataAuth: authReduced,
   dataError: errorReducer
 });

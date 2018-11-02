@@ -1,7 +1,7 @@
 import { createReducer } from '../../utilities/utility';
 import * as TYPES from './types';
 
-type State = {
+export type StateError = {
   message: string,
   statusCode: number
 }
@@ -9,14 +9,14 @@ type Payload = {
   message: string,
   statusCode: number
 }
-type ActionHandlerMessageError<T> = (state: State, payload: T) => State;
+type ActionHandlerMessageError<T> = (state: StateError, payload: T) => StateError;
 
-const initState: State = {
+const initState: StateError = {
   message: '',
   statusCode: 0
 }
 
-const messageError: ActionHandlerMessageError<Payload> = (state: State, { message, statusCode }) => ({ ...state, message, statusCode });
+const messageError: ActionHandlerMessageError<Payload> = (state: StateError, { message, statusCode }) => ({ ...state, message, statusCode });
 
 const handlers = {
   [TYPES.MESSAGE_ERROR]: messageError
