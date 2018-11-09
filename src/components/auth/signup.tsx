@@ -1,5 +1,5 @@
 import React from 'react';
-import { bindActionCreators, Dispatch, AnyAction } from 'redux';
+import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import { signUpUserAction, signUpUser } from '../../store/auth/actions';
