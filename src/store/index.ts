@@ -8,7 +8,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { persistStore, persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { createBrowserHistory } from 'history';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
+import { connectRouter, routerMiddleware, ConnectedRouter } from 'connected-react-router';
 import { createWhitelistFilter } from 'redux-persist-transform-filter';
 
 import { rootSagas } from './sagas';
@@ -21,10 +21,12 @@ const sagaMiddleware = createSagaMiddleware();
 
 
 export type CombineReducers = {
+  router: any,
   dataAuth: StateAuth,
   dataError: StateError
 }
 const reducer: Reducer<CombineReducers> = combineReducers({
+  router: connectRouter(history),
   dataAuth: authReduced,
   dataError: errorReducer
 });
@@ -55,7 +57,7 @@ const middleware = composeWithDevTools(
 );
 
 export const store = createStore(
-  connectRouter(history)(persistedReducer),
+  persistedReducer,
   middleware
 );
 
