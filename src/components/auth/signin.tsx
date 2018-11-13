@@ -1,78 +1,102 @@
-import React, { RefObject } from 'react';
+import React, { ChangeEvent } from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import { CombineReducers } from '../../store/index';
 import { signInUser, signInUserAction } from '../../store/auth/actions';
+import { clearMessage } from '../../store/error/actions';
 import * as StyledBlock from '../styled-components/blocks';
 import * as StyledForm from '../styled-components/auth';
 
 
 type State = {
   email: string,
-  password: string
+  password: string,
+  loading: boolean,
+  showError: boolean
 }
 type Props = {
   loginUser: (email: string, password: string) => void,
-  error: string
+  error: string,
+  code: number,
+  clearError: () => void
 }
 type DispatchActions = {
   type: signInUserAction 
-}
-type EventMouseClick = {
-  clientX: number,
-  clientY: number,
-  target: {
-    clientWidth: number,
-    clientHeight: number,
-    offsetLeft: number,
-    offsetTop: number,
-    appendChild: (circle: Element) => void,
-    removeChild: (circle: Element) => void
-  }
-}
-type EventTarget = {
-  target: {
-    value: string
-  } 
 }
 
 class SignIn extends React.Component<Props, State> {
   state = {
     email: '',
-    password: ''
+    password: '',
+    loading: false,
+    showError: false
   }
 
-  handleChangeEmail = ({ target }: EventTarget) => {
-    this.setState({ email: target.value });
+  componentWillReceiveProps(nextProps: Props) {
+    const { error, code } = nextProps;
+    if (error && code === 1) this.setState({ loading: false, showError: true });
   }
 
-  handleChangePassword = ({ target }: EventTarget) => {
-    this.setState({ password: target.value });
+  handleChangeEmail = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { clearError } = this.props;
+    clearError();
+    this.setState({ email: target.value, showError: false });
   }
 
-  clickButtonAuth = (event: EventMouseClick) => {
-    const node = event.target;
-    const d = Math.max(node.clientWidth, node.clientHeight);
-    const circle = document.createElement('div');
-    circle.style.width = circle.style.height = d + 'px';
-    circle.style.left = event.clientX - node.offsetLeft - d / 2 + 'px';
-    circle.style.top = event.clientY - node.offsetTop - d / 2 + 'px';
-    circle.classList.add('ripple');
-    node.appendChild(circle);
-    setTimeout(() => {
-      node.removeChild(circle);
-    }, 400);
+  handleChangePassword = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { clearError } = this.props;
+    clearError();
+    this.setState({ password: target.value, showError: false });
+  }
+
+  keyPressEnter = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') this.clickButtonAuth();
+  }
+
+  clickButtonAuth = (event?: React.MouseEvent<HTMLElement>) => {
+    const { email, password } = this.state;
+    const { loginUser } = this.props;
+    if (event !== undefined) {
+      const node = event.target as HTMLButtonElement;
+      const d = Math.max(node.clientWidth, node.clientHeight);
+      const circle = document.createElement('div');
+      circle.style.width = circle.style.height = d + 'px';
+      circle.style.left = event.clientX - node.offsetLeft - d / 2 + 'px';
+      circle.style.top = event.clientY - node.offsetTop - d / 2 + 'px';
+      circle.classList.add('ripple');
+      node.appendChild(circle);
+      setTimeout(() => {
+        node.removeChild(circle);
+      }, 400);
+    }
+    loginUser(email, password);
+    this.setState({ loading: true });
   }
 
   render() {
-    const { email, password } = this.state;
-    const { error, loginUser } = this.props;
+    const { email, password, loading, showError } = this.state;
+    const { error } = this.props;
+    const spinner = loading ? (
+      <StyledForm.BackgroundSpinner>
+        <StyledForm.SpinnerBlock>
+          <StyledForm.Spinner />
+          <StyledForm.Spinner />
+          <StyledForm.Spinner />
+          <StyledForm.Spinner />
+        </StyledForm.SpinnerBlock>
+      </StyledForm.BackgroundSpinner>
+    ) : null;
     return (
       <StyledBlock.Wrapper>
         <StyledForm.Block>
           <StyledForm.BlockAuth>
-            <StyledForm.Form>
+            <StyledForm.ErrorBlock show={showError ? true : false}>
+              <StyledForm.ErrorValue>
+                {error}
+              </StyledForm.ErrorValue>
+            </StyledForm.ErrorBlock>
+            <StyledForm.Form onKeyPress={this.keyPressEnter}>
               <StyledForm.InputBlock>
                 <StyledForm.Input type="email" id="email" value={email} onChange={this.handleChangeEmail} />
                 <StyledForm.Label htmlFor="email" value={email}>
@@ -85,11 +109,10 @@ class SignIn extends React.Component<Props, State> {
                   Password
                 </StyledForm.Label>
               </StyledForm.InputBlock>
-              <StyledForm.ButtonBlock>
-                <StyledForm.Button onClick={this.clickButtonAuth}>
-                  Sign In
+                <StyledForm.Button onClick={this.clickButtonAuth} disabled={loading ? true : false}>
+                  { loading ? (spinner) : 'Sign In' }
+                  <span />
                 </StyledForm.Button>
-              </StyledForm.ButtonBlock>
             </StyledForm.Form>
           </StyledForm.BlockAuth>
         </StyledForm.Block>
@@ -99,11 +122,13 @@ class SignIn extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (store: CombineReducers) => ({
-  error: store.dataError.message
+  error: store.dataError.message,
+  code: store.dataError.statusCode
 });
 
 const mapActionsToProps = (dispatch: Dispatch<DispatchActions>) => bindActionCreators({
-  loginUser: signInUser
+  loginUser: signInUser,
+  clearError: clearMessage
 }, dispatch);
 
 export const SignInConnect = connect(mapStateToProps, mapActionsToProps)(SignIn);

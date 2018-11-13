@@ -10,6 +10,7 @@ type Payload = {
   statusCode: number
 }
 type ActionHandlerMessageError<T> = (state: StateError, payload: T) => StateError;
+type ActionHandlerMessageClear = (state: StateError) => StateError;
 
 const initState: StateError = {
   message: '',
@@ -17,9 +18,11 @@ const initState: StateError = {
 }
 
 const messageError: ActionHandlerMessageError<Payload> = (state: StateError, { message, statusCode }) => ({ ...state, message, statusCode });
+const clearMessage: ActionHandlerMessageClear = (state: StateError) => ({ ...state, message: '', statusCode: 0 });
 
 const handlers = {
-  [TYPES.MESSAGE_ERROR]: messageError
+  [TYPES.MESSAGE_ERROR]: messageError,
+  [TYPES.CLEAR_MESSAGE]: clearMessage
 }
 
 export const errorReducer = createReducer(initState, handlers);
