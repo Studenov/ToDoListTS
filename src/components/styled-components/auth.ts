@@ -32,7 +32,7 @@ export const Form = styled.div`
 export const ErrorBlock = styled.div`
   margin: 20px 0 0 0;
   width: 100%;
-  height: ${(props: ShowValue) => props.show ? '40px' : '10px'};
+  height: ${(props: ShowValue) => props.show ? 'auto' : '0'};
   background: rgba(255, 0, 0, 0.1);
   display: flex;
   opacity: ${(props: ShowValue) => props.show ? '1' : '0'};
@@ -49,8 +49,8 @@ export const ErrorValue = styled.p`
   color: #ff5a4c;
   font-weight: 700;
   width: 300px;
-  height: 30px;
   text-align: left;
+  min-height: ${(props: ShowValue) => props.show ? '40px' : '0'};
 `;
 export const InputBlock = styled.div`
   display: flex;

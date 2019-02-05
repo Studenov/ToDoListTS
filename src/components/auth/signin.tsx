@@ -51,10 +51,12 @@ class SignIn extends React.Component<Props, State> {
   }
 
   keyPressEnter = (e: React.KeyboardEvent) => {
+    const { loading } = this.state;
+    if (loading) return;
     if (e.key === 'Enter') this.clickButtonAuth();
   }
 
-  clickButtonAuth = (event?: React.MouseEvent<HTMLElement>) => {
+  clickButtonAuth = async (event?: React.MouseEvent<HTMLElement>) => {
     const { email, password } = this.state;
     const { loginUser } = this.props;
     if (event !== undefined) {
@@ -92,7 +94,7 @@ class SignIn extends React.Component<Props, State> {
         <StyledForm.Block>
           <StyledForm.BlockAuth>
             <StyledForm.ErrorBlock show={showError ? true : false}>
-              <StyledForm.ErrorValue>
+              <StyledForm.ErrorValue show={showError ? true : false}>
                 {error}
               </StyledForm.ErrorValue>
             </StyledForm.ErrorBlock>

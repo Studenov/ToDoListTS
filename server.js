@@ -60,6 +60,20 @@ const createApp = () => {
         statusCode: 0
       });
       else {
+        const emailReg = /^\w.[^/\<>,!#$%^:;'"&?*()/s]{3,}@\w.[^/\<>,!#$%^:;'"&?*()/s]+\.[a-z]{2,6}$/gi;
+        const passwordReg = /(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}/g;
+        if (!emailReg.test(req.body.email)) {
+          return res.status(401).send({
+            message: "Email incorrect",
+            statusCode: 1
+          });
+        }
+        if (!passwordReg.test(req.body.password)) {
+          return res.status(401).send({
+            message: "Password has to contain one uppercase, one lowecase, one number, one special character '!@#$%^&*' and be at least 6 characters long",
+            statusCode: 1
+          });
+        }
         const user = new UserModel({
           email: req.body.email,
           password: req.body.password
